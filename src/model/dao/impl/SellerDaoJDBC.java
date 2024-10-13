@@ -3,6 +3,7 @@ package model.dao.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import db.DB;
@@ -53,16 +54,9 @@ public class SellerDaoJDBC implements SellerDao {
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if(rs.next()) { //testa se veio algum resultado na consulta
-				Department dep = new Department(); //intanciando a classe departamento e setando os valores
-				dep.setId(rs.getInt("DepartmentId"));
-				dep.setName(rs.getString("DepName"));
-				Seller obj = new Seller();
-				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("Name"));
-				obj.setEmail(rs.getString("Email"));
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setDepartment(dep);
+				Department dep =  instantiateDepartment(rs); 
+				
+				Seller obj = isntantiateSeller(rs, dep);
 				return obj;
 			}
 			return null;
@@ -75,6 +69,27 @@ public class SellerDaoJDBC implements SellerDao {
 		}
 		
 	}
+	
+	//função da isntanciação do seller
+
+	private Seller isntantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setEmail(rs.getString("Email"));
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setDepartment(dep);
+		return obj;
+	}
+
+	//função da isntanciação do departamento
+	public Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department();
+		dep.setId(rs.getInt("DepartmentId"));
+		dep.setName(rs.getString("DepName"));
+		return dep;
+	}
 
 	@Override
 	public List<Seller> findAll() {
@@ -82,5 +97,7 @@ public class SellerDaoJDBC implements SellerDao {
 		return null;
 	}
 	//Classe responsável pela implementação do JDBC da interface SellerDao
+	
+	
 
 }
