@@ -92,10 +92,27 @@ public class SellerDaoJDBC implements SellerDao {
 		}
 		
 	}
-
+	
+	//método responsável por deletados dados de um vendedor através do id
 	@Override
 	public void deletById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st= null;
+		try {
+			st = conn.prepareStatement(
+					"DELETE FROM seller "
+					+"WHERE id = ?");
+			st.setInt(1, id);
+			
+			st.executeUpdate();
+			
+			
+			
+		}catch (Exception e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 
