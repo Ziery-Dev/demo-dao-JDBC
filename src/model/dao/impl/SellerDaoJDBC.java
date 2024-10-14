@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DbException;
@@ -96,7 +99,48 @@ public class SellerDaoJDBC implements SellerDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//Classe responsável pela implementação do JDBC da interface SellerDao
+	
+	//método que filtra por busca por departamento
+	@Override
+	public List<Seller> findByDepartment(Department department) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement( //Comando sql que retorna os dados de um ou mais vendedores através do departamento dele
+					"SELECT seller.*,department.Name as DepName "+
+					"FROM seller INNER JOIN department "+
+					"ON seller.DepartmentId = department.Id "+
+					"WHERE DepartmentId = ? "+
+					"ORDER BY Name");
+			
+			st.setInt(1, department.getId());
+			rs = st.executeQuery();
+			
+			List <Seller> list = new ArrayList<>();
+			Map <Integer, Department> map =  new HashMap<>();
+			while(rs.next()) { 
+				
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				if(dep == null) {
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				 
+				
+				Seller obj = isntantiateSeller(rs, dep);
+				
+				list.add(obj);
+				
+			}
+			return list;
+		} catch (Exception e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
+	}
 	
 	
 
