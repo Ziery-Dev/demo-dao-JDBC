@@ -6,7 +6,7 @@ Este projeto tem como objetivo praticar e implementar o padrão de design **DAO*
 
 - Java
 - JDBC (Java Database Connectivity)
-- MySQL (ou outro banco de dados relacional)
+- MySQL
 - Padrão DAO
 
 ## Funcionalidades
